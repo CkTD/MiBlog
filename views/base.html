@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{title}}</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+</head>
+
+<body class="two-column">
+    <script>
+        function onResize() {
+            if (window.innerWidth < 850) {
+                document.body.classList.remove("two-column");
+                document.body.classList.add("one-column");
+            }
+            else {
+                document.body.classList.remove("one-column");
+                document.body.classList.add("two-column");
+            }
+        }
+        window.addEventListener("resize", onResize);
+        onResize();
+    </script>
+    <div id="header">
+        <ul class="navigation-list">
+            <li>
+                <a href="/">LOGO</a>
+            </li>
+            <li>
+                <a href="/">Title</a>
+            </li>
+        </ul>
+    </div>
+    <div id="content">
+        <!--
+        <script>
+            document.getElementById("content").style.maxWidth = window.screen.availWidth * 0.87 + "px";
+        </script>
+        -->
+        <div id="main-content">
+        {{!base}}
+        </div>
+
+        <div id="widget-content">
+            <!--search-->
+            <div class="widget-content-item">
+                <h2 class="widget-content-item-title">Search</h2>
+                <form id="search-form"> 
+                    <input id="search-text" placeholder="Search ..." name="s" type="search">
+                    <input id="search-submit" value="Search" type="submit" style="-webkit-appearance: none;border-radius: 0;">
+                </form>
+            </div>
+            <!--category-->
+            <div class="widget-content-item">
+                <h2 class="widget-content-item-title">Categories</h2>
+                <ul id="categories-list">
+                    % for category in categories:
+                        <li><a href="/category/{{category[0]}}">{{category[1]}} ({{category[2]}})</a></li>
+                    % end
+                </ul>
+            </div>
+            <!--recent post-->
+            <div class="widget-content-item">
+                <h2 class="widget-content-item-title">Recent Posts</h2>
+                <ul>
+                    % for recent_post in recent_posts:
+                        <li><a href="/article/{{recent_post[0]}}">{{recent_post[1]}}</a></li>
+                    % end
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        <p>Footer</p>
+    </div>
+</body>
+
+</html>

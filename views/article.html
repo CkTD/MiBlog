@@ -1,0 +1,140 @@
+% rebase('base.html',**kwargs_base) 
+% from time import localtime,strftime
+
+% comments_d = {} 
+% for comment in comments: 
+%   comments_d[comment[0]]=comment 
+% end
+<!--article-->
+<div class="main-content-item">
+    <div id="article-header">
+        <h1 id="article-title">{{title}}</h1>
+        <div id="article-meta">
+            <span id="article-meta-author">Published: {{publish_time}}</span>
+            <span>|</span>
+            <span id="article-meta-time">Modified: {{modify_time}}</span>
+            <span>|</span>
+            <span id="article-meta-category">
+                <a href="/category/{{category_id}}" class="article-meta-link">Category: {{category_title}}</a>
+            </span>
+        </div>
+    </div>
+    <div id="article-body">
+        {{!content}}
+    </div>
+</div>
+<!--comment-->
+<div class="main-content-item">
+    <h2 id="comment-header">Comments({{len(comments)}})</h2>
+    % for comment in comments:
+    <div id="comment-{{comment[0]}}" class="comment-item">
+        <p class="comment-item-header">
+            <a href="/article/{{article_id}}#comment-{{comment[0]}}">
+                <b>{{comment[2]}} :</b>
+            </a>
+        </p>
+        % if comment[4]:
+            % if comment[4] in comments_d:
+            <div class="comment-item-quote">
+                <div class="quote">
+                    <p class="quote-head">
+                        <a href="/article/{{article_id}}#comment-{{comments_d[comment[4]][0]}}">@{{comments_d[comment[4]][2]}} :</a>
+                    </p>
+                    <p class="quote-content">{{comments_d[comment[4]][3]}}</p>
+                </div>
+            </div>
+            % else:
+            <div class="comment-item-quote">
+                <div class="quote">
+                    <p class="quote-content">The quote has been deleted.</p>
+                </div>
+            </div>
+            % end
+        % end
+        <p class="comment-item-content">{{comment[3]}}</p>
+        <p class="comment-item-footer">
+            <a href="/article/{{article_id}}#leave-comment-item" onclick="quote(this);">Reply</a> | {{strftime(' %Y.%m.%d %H:%M',localtime(comment[1]))}}
+        </p>
+    </div>
+    % end
+</div>
+<script>
+    function quote(node) {
+        var d = node.parentElement.parentElement;
+        var id = d.id.split('-')[1];
+        var name = d.querySelector(".comment-item-header a b").innerHTML.split(':')[0];
+        var comment = d.querySelector(".comment-item-content").innerHTML;
+        document.getElementById("leave-comment-quote-head").innerHTML = "@" + name + " :";
+        document.getElementById("leave-comment-quote-content").innerHTML = comment;
+        document.getElementById("leave-comment-quote-id").value = id;
+        document.getElementById("leave-comment-quote").style.display = "block";
+    }
+</script>
+
+<!--leave reply-->
+<div class="main-content-item" id="leave-comment-item">
+    <h2 id="leave-comment-header">Leave a Reply</h3>
+        <form name="comment_form" id="comment-form" action="/comment/{{article_id}}" method="POST" onsubmit="return validateFrom()">
+            <div class="leave-comment-rol">
+                <label>Name</label>
+                <p id="invalid-name" class="invalid-warn">Please input your name.</p>
+                <div class="comment-input-text-container">
+                    <input class="comment-line-text" type="text" name="name">
+                </div>
+            </div>
+            <div class="leave-comment-rol">
+                <label>Email</label>
+                <p id="invalid-email" class="invalid-warn">Please input your correct email address.</p>
+                <div class="comment-input-text-container">
+                    <input class="comment-line-text" type="text" name="email">
+                </div>
+            </div>
+            <div class="leave-comment-rol">
+                <label>Comment</label>
+                <div class="comment-input-text-container">
+                    <div id="leave-comment-quote" class="quote">
+                        <input id="leave-comment-quote-id" type="hidden" name="quote_id" value="">
+                        <p id="leave-comment-quote-head" class="quote-head"></p>
+                        <p id="leave-comment-quote-content" class="quote-content"></p>
+                    </div>
+                </div>
+                <p id="invalid-text" class="invalid-warn">Please input your comment.</p>
+                <div class="comment-input-text-container">
+                    <textarea id="leave-comment-comment" name="comment" rows="8"></textarea>
+                </div>
+            </div>
+            <div class="leave-comment-rol">
+                <div class="comment-input-text-container">
+                    <input id="leave-comment-commit" type="submit" value="Submit Comment" style="-webkit-appearance: none">
+                </div>
+                <p id="leave-comment-sending" style="display: none; color: green;">Sending... Please wait.</p>
+            </div>
+        </form>
+        <script>
+            function validateFrom() {
+                if (!document.getElementById('leave-comment-comment').value) {
+                    document.getElementById('invalid-text').style.display = 'block';
+                    return false;
+                }
+                else
+                    document.getElementById('invalid-text').style.display = 'none';
+
+                if (!document.forms["comment_form"].name.value) {
+                    document.getElementById('invalid-name').style.display = 'block';
+                    return false;
+                }
+                else
+                    document.getElementById('invalid-name').style.display = 'none';
+
+                if (document.forms["comment_form"].email.value.length < 3 || document.forms["comment_form"].email.value.indexOf("@") == -1) {
+                    document.getElementById('invalid-email').style.display = 'block';
+                    return false;
+                }
+                else
+                    document.getElementById('invalid-email').style.display = 'none';
+                document.getElementById('leave-comment-commit').style.display = "none";
+                document.getElementById("leave-comment-sending").style.display = "block";
+                return true;
+            }
+        </script>
+</div>
