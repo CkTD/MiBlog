@@ -9,17 +9,17 @@ A light dynamic blog server powered by [bottle](http://bottlepy.org/docs/dev/), 
 - Easy to post, update, delete new articles
 - Comment support (and quote)
 - All in python (web-framework, database and markdown renender).
-- Python3 only (which sqlite is buildin)
+- Python3 only!! (which sqlite is buildin)
 
 ## Dependence
 
 Depend on the following python modules
 
-- bottle
-- bottle_sqlite
-- mistune
+- bottle (framework)
+- bottle_sqlite (sqlite database plugin)
+- mistune (markdown renderer)
 
-You may install these modules or just download three files and copy them to your project dirctory.
+These three module files have been copied to project dirctory.
 
 ## Usage
 
