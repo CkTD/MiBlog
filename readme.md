@@ -6,7 +6,7 @@ A light dynamic blog server powered by [bottle](http://bottlepy.org/docs/dev/), 
 
 - Render markdown to HTML 
 - Build directories automatically
-- Easy to post, update, delete new articles
+- Easy to post, update, delete articles
 - Comment support (and quote)
 - All in python (web-framework, database and markdown renender).
 - Python3 only!! (which sqlite is buildin)
