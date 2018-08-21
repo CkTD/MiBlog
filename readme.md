@@ -1,4 +1,4 @@
-# Botlg
+# MiBlog
 
 A light dynamic blog server powered by [bottle](http://bottlepy.org/docs/dev/), [sqlite](https://www.sqlite.org/) and [mistune](https://pypi.org/project/mistune/), written in python.
 
