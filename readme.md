@@ -19,7 +19,7 @@ Depend on the following python modules
 - bottle_sqlite (sqlite database plugin)
 - mistune (markdown renderer)
 
-These three module files have been copied to project dirctory.
+These three module files have been copied to project dirctory, so all you need is python3.
 
 ## Usage
 
