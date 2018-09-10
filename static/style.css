@@ -219,6 +219,7 @@ body.one-column #content #main-content {
     margin-bottom: 0.5em;
     font-size: 1rem;
     white-space: pre-wrap;
+    word-break: break-all;
     line-height: 1.8em;
 }
 
