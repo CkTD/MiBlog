@@ -28,6 +28,7 @@ html {
 
 body {
     background: #2d323d;
+    min-height: 100vh;
 }
 
 a {
@@ -78,6 +79,7 @@ h1,h2,h3,h4,h5,h6 {
     max-width: 1150px;
     width: 100%;
     overflow: auto;
+    min-height: calc(100vh - 10rem);
 }
 
 body.two-column #content #main-content {
