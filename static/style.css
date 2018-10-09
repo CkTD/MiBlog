@@ -1,3 +1,17 @@
+/* 
+ * DARK 0:  #21252b  for header and footer
+ * DARK 1:  #2d323d  body bg
+ * DARK 2:  #383c4a  between DARK1 and DARK2
+ * DARK 2+: #454a57  
+ * DARK 3:  #404552  main content bg
+ 
+ * LIGHT 0: #cbd2db  main font color  
+ * LIGHT 1: #9599a1  
+ *
+ * BLUE  : #5294e2   button color
+ * BLUE- : #4a85cd   button hover color
+ */
+
 * {
     margin: 0;
     padding: 0;
@@ -7,14 +21,15 @@
 
 html {
     font-size: 16px;
-    color: #111;
+    color: #cbd2db;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     line-height: 1.5;
 }
 
 body {
-    background: #ddd;
+    background: #2d323d;
 }
+
 a {
     color: inherit;
 }
@@ -27,11 +42,11 @@ h1,h2,h3,h4,h5,h6 {
     margin-top: 1.5em;
     margin-bottom: 0.5em;
 }
-/* for header */
 
-#header {
-    color: #ddd;
-    background: #222;
+/* for header and footer*/
+#header,#footer{
+    color: #cbd2db;
+    background: #21252b;
     text-align: left;
     font-size: 1rem;
 }
@@ -53,14 +68,14 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 .navigation-list li a:hover {
-    background: #111;
+    background: #000000;
 }
 
 /* main content */
 
 #content {
-    margin: 3rem auto;
-    max-width: 1100px;
+    margin: 2rem auto;
+    max-width: 1150px;
     width: 100%;
     overflow: auto;
 }
@@ -77,14 +92,14 @@ body.one-column #content #main-content {
 }
 
 .main-content-item {
-    background: #f9f9f9;
+    background: #404552;
     padding: 2rem;
     margin-bottom: 2rem;
 }
 
 /* article */
 #article-header {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1.5px solid #9599a1;
     padding-bottom: 2rem;
     text-align: center;
 }
@@ -100,7 +115,7 @@ body.one-column #content #main-content {
 }
 
 #article-meta {
-    color: #444;
+    color: #9599a1;
     font-size: 1rem;
 }
 
@@ -154,7 +169,7 @@ body.one-column #content #main-content {
     font-size: 1.5rem;
     text-align: center;
     margin-bottom: 0.5em;
-    border-bottom: #ccc solid 1px;
+    border-bottom:#9599a1  solid 2px;
 }
 
 #category-item-container{
@@ -184,7 +199,7 @@ body.one-column #content #main-content {
 }
 
 .category-article-time {
-    color: #ccc;
+    color: #9599a1;
 }
 
 /* comment */
@@ -197,7 +212,7 @@ body.one-column #content #main-content {
 .comment-item{
     padding: 0em 1.5em 0.5em 1.5em;
     margin-bottom: 1em;
-    border-bottom: 2px solid #ddd;
+    border-bottom: 2px solid#9599a1;
 }
 
 .comment-item .comment-item-header{
@@ -249,15 +264,19 @@ body.one-column #content #main-content {
 }
 
 #comment-form .comment-line-text{
+    color: inherit;
+    background: #454a57;
     display: block;
-    border: #ddd 1px solid;
+    border: #9599a1  1.5px solid;
     padding: 0.5em 1em;
     width: 100%;
 }
 
 #comment-form #leave-comment-comment {
+    color: inherit;
+    background: #454a57;
     padding: 1em;
-    border: #ddd 1px solid;
+    border: #9599a1 1.5px solid;
     width: 100%;
     line-height: 1.8em;
 }
@@ -265,8 +284,12 @@ body.one-column #content #main-content {
 #comment-form #leave-comment-commit {
     padding: 1em;
     border: none;
-    background: #333;
-    color: #ddd;
+    background: #5294e2;
+    color: inherit;
+}
+
+#comment-form #leave-comment-commit:hover {
+    background:  #4a85cd;
 }
 
 #comment-form .invalid-warn {
@@ -281,9 +304,10 @@ body.one-column #content #main-content {
 }
 
 .quote {
+    color: inherit;
+    background-color: #383c4a;
     width: 100%;
     font-size: 0.8rem;
-    background: #fff;
     padding: 1em;
 }
 
@@ -295,6 +319,7 @@ body.one-column #content #main-content {
 .quote .quote-content {
     padding: 0 1em;
     white-space: pre-wrap;
+    word-break: break-all;
 }
 
 
@@ -314,7 +339,7 @@ body.one-column #content #widget-content {
 .widget-content-item {
     padding: 1.5em;
     margin-bottom: 2em;
-    background: #f9f9f9;
+    background: #404552;
 }
 
 .widget-content-item-title {
@@ -330,6 +355,11 @@ body.one-column #content #widget-content {
 .widget-content-item a:hover{
     text-decoration: underline;
 }
+
+
+
+
+
 
 #search-form {
     position: relative;
@@ -358,13 +388,4 @@ body.one-column #content #widget-content {
 
 #search-submit:hover {
     background: #111;
-}
-
-/* footer */
-
-#footer {
-    color: #ddd;
-    background: #222;
-    
-    padding: 1em;
 }
