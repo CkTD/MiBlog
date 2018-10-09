@@ -65,7 +65,6 @@ def optional_db(func):
             conn = sqlite3.connect(db_path)
             kwargs['cur'] = conn.cursor()
             new = True
-
         res = func(*args, **kwargs)
 
         if new:
@@ -76,6 +75,9 @@ def optional_db(func):
 
 
 def create_db():
+    if os.path.isfile(db_path):
+        print("Site already exist.")
+        exit()
     print("Create database.")
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
@@ -124,18 +126,18 @@ def create_db():
 
 
 @optional_db
-def add_category(name, cur=None):
+def add_category(name, cur):
     cur.execute('INSERT INTO category VALUES(NULL,?,0)',
                 (name,))
 
 
 @optional_db
-def delete_category(id, cur=None):
+def delete_category(id, cur):
     articles = cur.execute(
         'SELECT * FROM article WHERE category_id=?',
         (id,)).fetchall()
     for article in articles:
-        print('Delete Article: %s' % article[0])
+        print('Delete Article: %s' % article[1])
         delete_article(article[0], cur=cur)
 
     cur.execute('DELETE FROM category WHERE id=?',
@@ -146,10 +148,13 @@ def gen_image_handler(article_dir, res):
     def image_handler(src):
 
         docs_image_path = os.path.join(article_dir, src)
+        if not os.path.isfile(docs_image_path):
+            print("\t!!! missing images !!! %s" %docs_image_path)
+            return ""
         new_image_name = gen_filename(docs_image_path)
         static_image_path = os.path.join(images_dir, new_image_name)
 
-        print('\tNew image %s' % new_image_name)
+        print('\tAdd New image %s' % new_image_name)
         res[new_image_name] = (static_image_path, open(
             docs_image_path, 'rb').read())
         #shutil.copyfile(docs_image_path, static_image_path)
@@ -185,7 +190,7 @@ def get_article_text_img(md_path, article_dir):
 
 
 @optional_db
-def add_article(article_dir, category_id, cur=None):
+def add_article(article_dir, category_id, cur):
     try:
         md_path = find_files(article_dir, 'md')[0]
     except IndexError:
@@ -213,7 +218,7 @@ def add_article(article_dir, category_id, cur=None):
 
 
 @optional_db
-def modify_article(article_dir, article_id, mtime, cur=None):
+def modify_article(article_dir, article_id, mtime, cur):
     try:
         md_path = find_files(article_dir, 'md')[0]
     except IndexError:
@@ -235,7 +240,7 @@ def modify_article(article_dir, article_id, mtime, cur=None):
 
 
 @optional_db
-def delete_comment(id, cur=None):
+def delete_comment(id, cur):
     try:
         cur.execute('DELETE FROM comment WHERE id=?', (int(id),))
     except Exception as e:
@@ -246,7 +251,7 @@ def delete_comment(id, cur=None):
 
 
 @optional_db
-def delete_article(id, cur=None):
+def delete_article(id, cur):
     cur.execute('SELECT file_name FROM images WHERE article_id=?', (id,))
     for image in cur.fetchall():
         print('\tDelete image: %s' % image)
@@ -262,9 +267,12 @@ def delete_article(id, cur=None):
         'UPDATE category SET articles_count = articles_count - 1 WHERE id=?', (category_id,))
 
 
-def update_category(delete=False):
-    conn = sqlite3.connect(db_path)
-    cur = conn.cursor()
+@optional_db
+def update_category(delete=False, cur=None):
+    if delete == "delete":
+        delete = True
+    else:
+        delete = False
 
     db_category_records = cur.execute('SELECT * FROM category').fetchall()
     db_categories = [rec[1] for rec in db_category_records]
@@ -273,22 +281,21 @@ def update_category(delete=False):
 
     for docs_category in docs_categories:
         if docs_category not in db_categories:
-            print('Find new category: %s' % docs_category)
+            print('Add new category: %s' % docs_category)
             add_category(docs_category, cur=cur)
 
     if delete:
         for db_category_record in db_category_records:
             if not db_category_record[1] in docs_categories:
-                print('Delet category: %s\n' % db_category_record[1])
+                print('Delete category: %s' % db_category_record[1])
                 delete_category(db_category_record[0], cur=cur)
 
-    conn.commit()
-    conn.close()
-
-
-def update_article(delete=False):
-    conn = sqlite3.connect(db_path)
-    cur = conn.cursor()
+@optional_db
+def update_article(delete=False, cur=None):
+    if delete == "delete":
+        delete = True
+    else:
+        delete = False
 
     docs_categories = get_subdirs(docs_dir)
     for docs_category in docs_categories:
@@ -330,10 +337,6 @@ def update_article(delete=False):
                                               db_article_record[1]))
                     delete_article(db_article_record[0], cur=cur)
 
-    conn.commit()
-    conn.close()
-
-
 def update_all(delete=False):
     update_category(delete)
     update_article(delete)
@@ -341,9 +344,25 @@ def update_all(delete=False):
 
 def init():
     create_db()
-    update_category()
-    update_article()
+    update_all()
+
+def clean():
+    if not input("Are you sure? (y/n)") == 'y':
+        return
+    try:
+        os.unlink(db_path)
+    except FileNotFoundError:
+        print("%s not exist" %db_path)
+    imgs = os.listdir(images_dir)
+    for img in imgs:
+        if os.path.isfile(os.path.join(images_dir,img)):
+            os.unlink(os.path.join(images_dir,img))
+
+    
 
 
 if __name__ == '__main__':
-    globals()[sys.argv[1]](*sys.argv[2:])
+    try:
+        globals()[sys.argv[1]](*sys.argv[2:])
+    except KeyError:
+        print("python gentool.py init|clean|update_category|update_article|update_all [delete]")

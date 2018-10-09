@@ -27,7 +27,7 @@ These three module files have been copied to project dirctory, so all you need i
    Organise your markdown file and images in categories, and put them in  `/docs` folder. It should like this:
    
     ```
-    |---docs 
+    |---docs
     |     |---category_1
     |     |      |---passage_1
     |     |      |      |------passage_name.md
@@ -36,7 +36,7 @@ These three module files have been copied to project dirctory, so all you need i
     |     |      |      |        .
     |     |      |      |        .
     |     |      |      |        .
-    |     |      |      
+    |     |      |
     |     |      |---passage_2
     |     |      |      .
     |     |      |      .
@@ -66,13 +66,12 @@ These three module files have been copied to project dirctory, so all you need i
     python server.py
     ```
 
-
 To add, delete or modify, just change the categories and files in `/docs` folder and run one of the following command:
 
-- `./gentool.py update_category` 
+- `./gentool.py update_category`
 - `./gentool.py update_article`
 - `./gentool.py update_all`
 
-Any of this command will update the database according to the content in `/docs` folder. But won't delete anything in database that has been deleted in  `/docs` folder. However, you can specify arguement `delete=True` to delete them. 
+Any of this command will update the database according to the content in `/docs` folder. But won't delete anything in database that has been deleted in  `/docs` folder. However, you can specify arguement `delete` to delete them.
 
 ## Use at your own risk!
