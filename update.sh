@@ -4,7 +4,7 @@
 #
 # push: ./update.sh [delete]            sync remote docs by local ./docs and update database
 # pull: ./update.sh download [delete]   sync local ./docs by remote
-# !!! delete will delete files at receive side that not exist in remote side !!!
+# !!! delete will delete files at receive side that not exist in send side !!!
 #
 
 PORT=27173
