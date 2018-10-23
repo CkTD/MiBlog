@@ -13,9 +13,16 @@ from config import db_path, static_dir
 
 import time
 import os
+import sys
+
+if len(sys.argv) > 1 and sys.argv[1] in ["start","stop","restart"]:
+    from daemon import daemon_exec
+    daemon_config = {'daemon':sys.argv[1], 'pid-file':".pid", 'log-file':"log"}
+    daemon_exec(daemon_config)
+
+
 
 install(SQLitePlugin(dbfile=db_path))
-
 
 def get_kwargs_base(title, db):
     return {
@@ -116,4 +123,4 @@ def post_comment(article_id, db):
         redirect('/article/%s#comment-header' % article_id)
 
 
-run(host='', port=8000, debug=True)
+run(host='', port=8000, debug=False)
