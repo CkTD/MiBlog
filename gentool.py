@@ -255,7 +255,10 @@ def delete_article(id, cur):
     cur.execute('SELECT file_name FROM images WHERE article_id=?', (id,))
     for image in cur.fetchall():
         print('\tDelete image: %s' % image)
-        os.unlink(os.path.join(images_dir, image[0]))
+        try:
+            os.unlink(os.path.join(images_dir, image[0]))
+        except FileNotFoundError:
+            print("\tNot exist!")
 
     category_id = cur.execute(
         'SELECT category_id FROM article WHERE id=?', (id,)).fetchone()[0]
