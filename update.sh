@@ -8,7 +8,7 @@
 #
 
 PORT=27173
-REMOTE=root@server
+REMOTE=root@onebyte.cc
 REMOTE_ROOT=/root/MiBlog
 
 if [ "$1" = "download" ] ; then
@@ -23,13 +23,18 @@ fi
 if [ "$1" = "delete" ] ; then
     gentool_delete=delete
     rsync_delete="--delete"
-else
-    gentool_delete=""
-    rsync_delete=""
 fi
 
+
+echo "Backing up..."
+backupdir=./backup/`date +%Y-%m-%d:%H-%M-%S`
+ssh -p $PORT $REMOTE "cd $REMOTE_ROOT && mkdir -p $backupdir && cp -r ./docs $backupdir"
+
+echo "Copying files..."
 #scp -p -r -P $PORT ./docs $REMOTE:$REMOTE_ROOT/docs
 rsync -avh --progress -e 'ssh -p '$PORT'' $rsync_delete ./docs $REMOTE:$REMOTE_ROOT
 
+echo "Updating db..."
 # easy but dirty...
 ssh -p $PORT $REMOTE "cd $REMOTE_ROOT && ./gentool.py update_all $gentool_delete"
+
