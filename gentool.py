@@ -357,7 +357,7 @@ def update_article(delete=False, cur=None):
             else:
                 the_db_article_record = [
                     i for i in db_article_records if i[1] == get_title_by_file(docs_article)][0]
-                the_db_article_mtime = the_db_article_record[4]
+                the_db_article_mtime = the_db_article_record[5]
                 the_docs_article_mtime = int(
                     os.path.getmtime(find_files(article_path, "md")[0]))
                 if the_db_article_mtime != the_docs_article_mtime:
