@@ -1,0 +1,78 @@
+<!-- Can't find better method for this template engine -->
+% headers = kwargs_headers
+% ttt = [{"nm":"1","link":"/","sub":[{"nm":"1.1","link":"/","sub":[{"nm":"1.1.3123132321311","link":"/","sub":[]}]},{"nm":"1.2","link":"/","sub":[]},{"nm":"1.3","link":"/","sub":[]}]},{"nm":"2","link":"/","sub":[]}]
+% kwargs_test_headers={'l2s':ttt}
+
+
+<div class="collapse-head" style="text-align: center">
+    % if headers["sub"]:
+    <span class="collapse-button">&#x1f87e</span>
+    % end
+    <span><strong>content</strong></span>
+</div>
+<div class="collapse-body h2" style="display: block;">
+    % for l2 in headers["sub"]:
+    <div class="collapse-head">
+        % if l2["sub"]:
+        <!-- A whitespace is added between tab <span> and <a>, How to remove? -->
+        <span class="collapse-button">&#x1f87e</span>
+        % end
+        <a href="{{l2["link"]}}"> {{l2["nm"]}}</a>
+    </div>
+    <div class="collapse-body h3" style="display: block;">
+        % for l3 in l2["sub"]:
+        <div class="collapse-head">
+            % if l3["sub"]:
+            <span class="collapse-button">&#x1f87e</span>
+            % end
+            <a href="{{l3["link"]}}"> {{l3["nm"]}}</a>
+        </div>
+        <div class="collapse-body h4" style="display: block;">
+            % for l4 in l3["sub"]:
+            <div class="collapse-head">
+                % if l4["sub"]:
+                <span class="collapse-button">&#x1f87e</span>
+                % end
+                <a href="{{l4["link"]}}"> {{l4["nm"]}}</a>
+            </div>
+            <div class="collapse-body h5" style="display: block;">
+                % for l5 in l4["sub"]:
+                <div class="collapse-head">
+                    % if l5["sub"]:
+                    <span class="collapse-button">&#x1f87e</span>
+                    % end
+                    <a href="{{l5["link"]}}"> {{l5["nm"]}}</a>
+                </div>
+                <div class="collapse-body h6" style="display: block;">
+                    % for l6 in l5["sub"]:
+                    <div>
+                        <a href="{{l6["link"]}}"> {{l6["nm"]}}</a>
+                    </div>
+                    %end
+                </div>
+                %end
+            </div>
+            %end
+        </div>
+        %end
+    </div>
+    % end
+</div>
+<script>
+var coll = document.getElementsByClassName("collapse-button");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.parentElement.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+      this.innerHTML = "&#x1f87a";
+    } else {
+      content.style.display = "block";
+      this.innerHTML = "&#x1f87e";
+    }
+  });
+} 
+</script>

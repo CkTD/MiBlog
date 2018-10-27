@@ -125,6 +125,21 @@ body.one-column #content #main-content {
     margin-right: 1em;
 }
 
+#article-content {
+    display: inline-block;
+    padding: 1em 2em 1em 3em;
+    margin: 1em 0em;
+    background: #383c4a;
+}
+
+#article-content .collapse-button {
+    margin-left: -1em;
+    cursor: pointer;
+}
+
+#article-content .h3, .h4, .h5, .h6{
+    padding-left: 2em;
+}
 
 #article-body {
     font-size: 1rem;

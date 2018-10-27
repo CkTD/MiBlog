@@ -14,6 +14,7 @@ from config import db_path, static_dir
 import time
 import os
 import sys
+import json
 
 if len(sys.argv) > 1 and sys.argv[1] in ["start","stop","restart"]:
     from daemon import daemon_exec
@@ -55,7 +56,7 @@ def article(article_id, db):
     if not psg:
         abort(404, "Sorry, article not found.")
     category = db.execute(
-        'SELECT * FROM category WHERE id=?', (psg[5],)).fetchone()
+        'SELECT * FROM category WHERE id=?', (psg[6],)).fetchone()
     comments = db.execute(
         'SELECT id,time,name,comment,quote_id FROM comment WHERE article_id=?', (article_id,)).fetchall()
     comments.sort(key=lambda i: i[0], reverse=True)
@@ -64,11 +65,12 @@ def article(article_id, db):
         'article_id': psg[0],
         'title': psg[1],
         'content': psg[2],
-        'publish_time': time.strftime("%Y.%m.%d %H:%M", time.localtime(psg[3])),
-        'modify_time': time.strftime("%Y.%m.%d %H:%M", time.localtime(psg[4])),
+        'publish_time': time.strftime("%Y.%m.%d %H:%M", time.localtime(psg[4])),
+        'modify_time': time.strftime("%Y.%m.%d %H:%M", time.localtime(psg[5])),
         'category_id': category[0],
         'category_title': category[1],
         'comments': comments,
+        'kwargs_headers': json.loads(psg[3]),
         'kwargs_base': get_kwargs_base(psg[1], db)
     }
     return template('article.html', **kwargs)

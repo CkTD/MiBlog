@@ -6,6 +6,7 @@ import sys
 import shutil
 import hashlib
 import sqlite3
+import json
 
 from functools import wraps
 
@@ -15,9 +16,9 @@ import mistune
 
 
 class myRenderer(mistune.Renderer):
+    # override to call my image_handler 
     def image(self, src, title, text):
         """Rendering a image with title and text.
-
         :param src: source link of the image.
         :param title: title text of the image.
         :param text: alt text of the image.
@@ -36,6 +37,16 @@ class myRenderer(mistune.Renderer):
         if self.options.get('use_xhtml'):
             return '%s />' % html
         return '%s>' % html
+    
+    # override to call my header_handler
+    def header(self, text, level, raw=None):
+        """Rendering header/heading tags like ``<h1>`` ``<h2>``.
+        :param text: rendered text content for the header.
+        :param level: a number for the header level, for example: 1.
+        :param raw: raw text content of the header.
+        """
+        self.options['header_handler'](level, text)
+        return '<h%d id="%s">%s</h%d>\n' % (level,text ,text, level)
 
 
 def get_subdirs(parent_dir):
@@ -93,6 +104,7 @@ def create_db():
             id            INTEGER PRIMARY KEY,
             title         TEXT,
             html          TEXT,
+            headers       TEXT,
             publish_time  INT,
             modify_time   INT,
             category_id   INTEGER,
@@ -145,8 +157,11 @@ def delete_category(id, cur):
 
 
 def gen_image_handler(article_dir, res):
+    """
+    Generate new name for images and save them in res
+    res[imags_name] = image_bytes
+    """
     def image_handler(src):
-
         docs_image_path = os.path.join(article_dir, src)
         if not os.path.isfile(docs_image_path):
             print("\t!!! missing images !!! %s" %docs_image_path)
@@ -164,6 +179,27 @@ def gen_image_handler(article_dir, res):
         return static_image_path
     return image_handler
 
+def gen_header_handler(res):
+    """
+    Save the header's hierarchical structure in res
+    """
+    def header_handler(level, text):
+        if level == 1:
+            return
+        cur_level = 1
+        cur_header = res
+        while level > cur_level:
+            try:
+                cur_header = cur_header[-1]["sub"]
+            except IndexError as e:
+                print ("Warning: bad hrader order! %s" % e)
+                return
+            cur_level += 1
+        cur_header.append({"nm":text, "link":"#%s"%text ,"sub":[]})
+    return header_handler
+
+        
+
 
 def find_files(dir, ext):
     l = []
@@ -174,20 +210,19 @@ def find_files(dir, ext):
             l.append(file_path)
     return l
 
-
 def get_title_by_file(filename):
     return ' '.join(filename.split('_'))
 
-
-def get_article_text_img(md_path, article_dir):
+def get_article_text_img_header(md_path, article_dir):
     images = {}
+    headers = [{"nm":"content", "link":"", "sub":[]}]
     with open(md_path, 'r', encoding='UTF-8') as md:
         myrenderer = myRenderer(
-            image_handler=gen_image_handler(article_dir, images))
+            image_handler = gen_image_handler(article_dir, images),
+            header_handler= gen_header_handler(headers))
         markdown = mistune.Markdown(renderer=myrenderer)
         html = markdown(md.read())
-    return html, images
-
+    return html, images, json.dumps(headers[0])
 
 @optional_db
 def add_article(article_dir, category_id, cur):
@@ -201,10 +236,10 @@ def add_article(article_dir, category_id, cur):
     os.utime(md_path, None)
     time = int(os.path.getmtime(md_path))
     title = get_title_by_file(os.path.split(article_dir)[1])
-    html, images = get_article_text_img(md_path, article_dir)
-
-    cur.execute('INSERT INTO article VALUES(NULL,?,?,?,?,?)',
-                (title, html, time, time, category_id))
+    html, images, headers = get_article_text_img_header(md_path, article_dir)
+   
+    cur.execute('INSERT INTO article VALUES(NULL,?,?,?,?,?,?)',
+                (title, html, headers,time, time, category_id))
     article_id = cur.lastrowid
     for name in images:
         path, data = images[name]
@@ -213,7 +248,6 @@ def add_article(article_dir, category_id, cur):
         open(path, 'wb').write(data)
     cur.execute(
         'UPDATE category SET articles_count = articles_count + 1 WHERE id=?', (category_id,))
-
     return article_id
 
 
@@ -227,7 +261,7 @@ def modify_article(article_dir, article_id, mtime, cur):
 
     cur.execute('DELETE FROM images WHERE article_id=?', (article_id,))
 
-    html, images = get_article_text_img(md_path, article_dir)
+    html, images, headers = get_article_text_img_header(md_path, article_dir)
     for name in images:
         path, data = images[name]
         cur.execute('INSERT INTO images VALUES(NULL,?,?)',
@@ -235,6 +269,7 @@ def modify_article(article_dir, article_id, mtime, cur):
         open(path, 'wb').write(data)
 
     cur.execute('UPDATE article SET html=? WHERE id=?', (html, article_id))
+    cur.execute('UPDATE article SET headers=? WHERE id=?',(headers, article_id))
     cur.execute('UPDATE article SET modify_time=? WHERE id=?',
                 (mtime, article_id))
 

@@ -1,10 +1,12 @@
 % rebase('base.html',**kwargs_base) 
 % from time import localtime,strftime
 
-% comments_d = {} 
+% comments_d = {}
 % for comment in comments: 
 %   comments_d[comment[0]]=comment 
 % end
+
+
 <!--article-->
 <div class="main-content-item">
     <div id="article-header">
@@ -19,10 +21,15 @@
             </span>
         </div>
     </div>
+    <div id="article-content">
+        % include('content.html', **kwargs_headers)
+    </div>
     <div id="article-body">
         {{!content}}
     </div>
 </div>
+
+
 <!--comment-->
 <div class="main-content-item">
     <h2 id="comment-header">Comments({{len(comments)}})</h2>
