@@ -69,7 +69,7 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 .navigation-list li a:hover {
-    background: #000000;
+    color: white;
 }
 
 /* main content */
@@ -409,7 +409,7 @@ body.two-column #content #widget-content {
     float: right;
     position: relative;
     width: 30%;
-    padding-left: 0.5em;
+    padding-left: 0.5rem;
 }
 
 body.one-column #content #widget-content {
