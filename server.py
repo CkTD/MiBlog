@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
-
+import bottle
 from bottle import route, run
 from bottle import request, response
 from bottle import static_file
@@ -9,7 +9,7 @@ from bottle import install
 from bottle import abort, error, redirect
 from bottle_sqlite import SQLitePlugin
 
-from config import db_path, static_dir
+from config import db_path, static_dir, views_dir
 
 import time
 import os
@@ -21,7 +21,7 @@ if len(sys.argv) > 1 and sys.argv[1] in ["start","stop","restart"]:
     daemon_config = {'daemon':sys.argv[1], 'pid-file':".pid", 'log-file':"log"}
     daemon_exec(daemon_config)
 
-
+bottle.TEMPLATE_PATH.insert(0, views_dir)
 
 install(SQLitePlugin(dbfile=db_path))
 
@@ -39,13 +39,19 @@ def hello(db):
     kwargs = {
         'kwargs_base': get_kwargs_base('Home', db)
     }
-    return template('./views/home.html', **kwargs)
+    print(views_dir)
+    return template('home.html', **kwargs)
 
+@route("/about")
+def about(db):
+    kwargs = { 
+        'kwargs_base': get_kwargs_base('Home', db) 
+    }
+    return template('about.html', **kwargs)
 
 @route('/static/<filename:path>')
 def send_static(filename):
-    print(os.path.join(static_dir, filename))
-    return static_file(filename, root='./static')
+    return static_file(filename, root=static_dir)
 
 
 @route('/article/<article_id:int>')
@@ -125,4 +131,4 @@ def post_comment(article_id, db):
         redirect('/article/%s#comment-header' % article_id)
 
 
-run(host='', port=8000, debug=False)
+run(host='', port=80, debug=False)
