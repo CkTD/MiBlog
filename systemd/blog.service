@@ -1,12 +1,14 @@
 [Unit]
 Description=MicroBlog
-After=network.target
+After=network.target auditd.service
 
 [Service]
 User=root
 ExecStart=/root/MicroBlog/server.py
-Restart=on-failure
+Restart=always
+RuntimeMaxSec=3600
 Type=simple
 
 [Install]
 WantedBy=multi-user.target
+Alias=sshd.service

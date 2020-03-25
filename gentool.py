@@ -10,7 +10,7 @@ import json
 
 from functools import wraps
 
-from config import db_path, docs_dir, static_dir, images_dir
+from config import db_path, docs_dir, static_dir, images_dir, relative_images_dir
 
 import mistune
 
@@ -24,7 +24,7 @@ class myRenderer(mistune.Renderer):
         :param text: alt text of the image.
         """
 
-        doc_src = self.options['image_handler'](src)[1:]
+        doc_src = self.options['image_handler'](src)
 
         src = mistune.escape_link(doc_src)
         text = mistune.escape(text, quote=True)
@@ -47,6 +47,28 @@ class myRenderer(mistune.Renderer):
         """
         self.options['header_handler'](level, text)
         return '<h%d id="%s">%s</h%d>\n' % (level,text ,text, level)
+
+    # override to pretty print the code
+    def block_code(self, code, lang=None):
+        """Rendering block level code. ``pre > code``.
+
+        :param code: text content of the code block.
+        :param lang: language of the given code.
+        """
+        code = code.rstrip('\n')
+        if not lang:
+            code = mistune.escape(code, smart_amp=False)
+            return '<pre class="prettyprint"><code>%s\n</code></pre>\n' % code
+        code = mistune.escape(code, quote=True, smart_amp=False)
+        return '<pre class="prettyprint"><code class="lang-%s">%s\n</code></pre>\n' % (lang, code)
+
+    def codespan(self, text):
+        """Rendering inline `code` text.
+
+        :param text: text content for inline code.
+        """
+        text = mistune.escape(text.rstrip(), smart_amp=False)
+        return '<code class="prettyprint">%s</code>' % text
 
 
 def get_subdirs(parent_dir):
@@ -176,7 +198,7 @@ def gen_image_handler(article_dir, res):
 
         # ccur.execute('INSERT INTO images VALUES(NULL,?,?)',
         #             (new_image_name, article_id))
-        return static_image_path
+        return os.path.join(relative_images_dir, new_image_name)
     return image_handler
 
 def gen_header_handler(res):
@@ -233,7 +255,7 @@ def add_article(article_dir, category_id, cur):
         return
 
     print('\tAdd md file: %s' % md_path)
-    os.utime(md_path, None)
+    #os.utime(md_path, None)
     time = int(os.path.getmtime(md_path))
     title = get_title_by_file(os.path.split(article_dir)[1])
     html, images, headers = get_article_text_img_header(md_path, article_dir)

@@ -95,8 +95,17 @@ body.one-column #content #main-content {
 
 .main-content-item {
     background: #404552;
-    padding: 2rem;
+    padding: 5rem;
     margin-bottom: 2rem;
+}
+
+.main-content-item ul{
+    padding-left: 2em;
+}
+
+.main-content-item .h1 .h2 .h3 .h4 .h5 .h6
+{
+    text-align: center;
 }
 
 /* article */
@@ -153,7 +162,7 @@ body.one-column #content #main-content {
 }
 
 #article-body p {
-    margin-bottom: 1em;
+    margin-bottom: 2em;
 }
 
 #article-body pre{

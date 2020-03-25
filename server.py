@@ -16,11 +16,6 @@ import os
 import sys
 import json
 
-if len(sys.argv) > 1 and sys.argv[1] in ["start","stop","restart"]:
-    from daemon import daemon_exec
-    daemon_config = {'daemon':sys.argv[1], 'pid-file':".pid", 'log-file':"log"}
-    daemon_exec(daemon_config)
-
 bottle.TEMPLATE_PATH.insert(0, views_dir)
 
 install(SQLitePlugin(dbfile=db_path))
@@ -131,4 +126,4 @@ def post_comment(article_id, db):
         redirect('/article/%s#comment-header' % article_id)
 
 
-run(host='', port=80, debug=False)
+run(host='', port=80, debug=True)

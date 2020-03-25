@@ -7,9 +7,9 @@
 # !!! delete will delete files at receive side that not exist in send side !!!
 #
 
-PORT=27173
-REMOTE=root@onebyte.cc
-REMOTE_ROOT=/root/MiBlog
+PORT=22222
+REMOTE=root@47.240.5.208
+REMOTE_ROOT=/root/MicroBlog
 
 if [ "$1" = "download" ] ; then
     if [ "$2" = "delete" ] ; then
@@ -31,10 +31,8 @@ backupdir=./backup/`date +%Y-%m-%d:%H-%M-%S`
 ssh -p $PORT $REMOTE "cd $REMOTE_ROOT && mkdir -p $backupdir && cp -r ./docs $backupdir"
 
 echo "Copying files..."
-#scp -p -r -P $PORT ./docs $REMOTE:$REMOTE_ROOT/docs
 rsync -avh --progress -e 'ssh -p '$PORT'' $rsync_delete ./docs $REMOTE:$REMOTE_ROOT
 
 echo "Updating db..."
-# easy but dirty...
 ssh -p $PORT $REMOTE "cd $REMOTE_ROOT && ./gentool.py update_all $gentool_delete"
 
